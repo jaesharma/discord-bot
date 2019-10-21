@@ -1,0 +1,4 @@
+git+https://github.com/Rapptx/dicord.py@rewrite
+pandas
+dnspython==1.16.0
+async-timeout==3.0.1
