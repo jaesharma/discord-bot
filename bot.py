@@ -4,9 +4,8 @@ import asyncio
 import time
 from datetime import datetime as dt
 import praw
-import secrets
 
-TOKEN=secrets.gettoken()
+TOKEN='NjM1MTk2MDk1MDM4NzUwNzUw.Xa40Lw.lxsPhzO5Ri_2_MpJKLzm2VLHTs4'
 
 client=commands.Bot(command_prefix='.')
 
@@ -62,8 +61,8 @@ async def clear(ctx,amount=100):
 @client.command(pass_context=True)
 async def reddit(ctx,*args):
 	channel=ctx.message.channel
-	client_id=secrets.getuser()
-	client_secret=secrets.getsecret()
+	client_id='_EtunUH8kMdJ-g'
+	client_secret='ZzW7E0fmJ7jhDnjKGUCzAfVGWvU'
 	user_agent="bru"
 	count=0
 
