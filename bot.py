@@ -82,8 +82,5 @@ async def reddit(ctx,*args):
 			await channel.send(i.title)
 		count+=1
 
-@client.command(pass_content=True)
-async def l(ctx):
-	await client.close()
 
 client.run(TOKEN)
