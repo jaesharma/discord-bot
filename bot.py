@@ -77,9 +77,9 @@ async def reddit(ctx,*args):
 			break
 		if url.endswith('jpg') or url.endswith('jpeg') or url.endswith('png'):
 			await channel.send(url)
-			await channel.send('---------------')
 		else:
 			await channel.send(i.title)
+			await channel.send('---------------')
 		count+=1
 
 
