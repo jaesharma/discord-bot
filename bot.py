@@ -24,32 +24,32 @@ async def showerthoughts():
 				for i in sub:
 					await channel.send(i.title)
 					break
-		await asyncio.sleep(3600)
+		await asyncio.sleep(30)
 
 async def memes():
 	while True:
 		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
-		sub=reddit.subreddit('memes').new(limit=10)
+		sub=reddit.subreddit('memes').new(limit=900)
 		channels = client.get_all_channels()
 		for channel in channels:
 			if channel.name=='memes':
 				channel=client.get_channel(channel.id)
 				for i in sub:
 					await channel.send(i.url)
-		await asyncio.sleep(3600)
+					await asyncio.sleep(300)
 
 
 async def dank():
 	while True:
 		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
-		sub=reddit.subreddit('dankmemes').new(limit=15)
+		sub=reddit.subreddit('dankmemes').new(limit=900)
 		channels = client.get_all_channels()
 		for channel in channels:
 			if channel.name=='memes':
 				channel=client.get_channel(channel.id)
 				for i in sub:
 					await channel.send(i.url)
-		await asyncio.sleep(5400)
+					await asyncio.sleep(300)
 
 client.loop.create_task(dank())
 client.loop.create_task(memes())
