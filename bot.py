@@ -5,32 +5,61 @@ import time
 from datetime import datetime as dt
 import praw
 
+#secrets:
 TOKEN='NjM1MTk2MDk1MDM4NzUwNzUw.Xa40Lw.lxsPhzO5Ri_2_MpJKLzm2VLHTs4'
+client_id='_EtunUH8kMdJ-g'
+client_secret='ZzW7E0fmJ7jhDnjKGUCzAfVGWvU'
+user_agent="bru"
 
 client=commands.Bot(command_prefix='.')
 
+async def showerthoughts():
+	while True:
+		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
+		sub=reddit.subreddit('Showerthoughts').new(limit=10)
+		channels = client.get_all_channels()
+		for channel in channels:
+			if channel.name=='general':
+				channel=client.get_channel(channel.id)
+				for i in sub:
+					await channel.send(i.title)
+					break
+		await asyncio.sleep(3600)
 
-async def my_background_task():
-    await client.wait_until_ready()
-    counter = 0
-    channels = client.get_all_channels()
-    for channel in channels:
-    	if channel.name=='general':
-    		channel=client.get_channel(channel.id)
-    		break
-    while True:
-    	if 9<dt.now().hour<10:
-    		print('schedule now')
-    	await asyncio.sleep(10)
+async def memes():
+	while True:
+		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
+		sub=reddit.subreddit('memes').new(limit=10)
+		channels = client.get_all_channels()
+		for channel in channels:
+			if channel.name=='memes':
+				channel=client.get_channel(channel.id)
+				for i in sub:
+					await channel.send(i.url)
+		await asyncio.sleep(3600)
 
+
+async def dank():
+	while True:
+		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
+		sub=reddit.subreddit('dankmemes').new(limit=15)
+		channels = client.get_all_channels()
+		for channel in channels:
+			if channel.name=='memes':
+				channel=client.get_channel(channel.id)
+				for i in sub:
+					await channel.send(i.url)
+		await asyncio.sleep(5400)
+
+client.loop.create_task(dank())
+client.loop.create_task(memes())
+client.loop.create_task(showerthoughts())
 
 @client.event
 async def on_ready():
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
-
-client.loop.create_task(my_background_task())
 
 @client.event
 async def on_message(message):
@@ -61,9 +90,6 @@ async def clear(ctx,amount=100):
 @client.command(pass_context=True)
 async def reddit(ctx,*args):
 	channel=ctx.message.channel
-	client_id='_EtunUH8kMdJ-g'
-	client_secret='ZzW7E0fmJ7jhDnjKGUCzAfVGWvU'
-	user_agent="bru"
 	count=0
 
 	reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
