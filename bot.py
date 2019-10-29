@@ -16,14 +16,15 @@ client=commands.Bot(command_prefix='.')
 async def showerthoughts():
 	while True:
 		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
-		sub=reddit.subreddit('Showerthoughts').new(limit=10)
+		sub=reddit.subreddit('Showerthoughts').new(limit=900)
 		channels = client.get_all_channels()
 		for channel in channels:
 			if channel.name=='general':
 				channel=client.get_channel(channel.id)
 				for i in sub:
-					await channel.send(i.title)
-					break
+					await channel.send(f'ShowerThoughts: {i.title}')
+					await channel.send('-----------------------')
+					await asyncio.sleep(300)
 		await asyncio.sleep(30)
 
 async def memes():
@@ -37,6 +38,7 @@ async def memes():
 				for i in sub:
 					await channel.send(i.url)
 					await asyncio.sleep(300)
+		await asyncio.sleep(30)
 
 
 async def dank():
@@ -50,6 +52,7 @@ async def dank():
 				for i in sub:
 					await channel.send(i.url)
 					await asyncio.sleep(300)
+		await asyncio.sleep(30)
 
 client.loop.create_task(dank())
 client.loop.create_task(memes())
