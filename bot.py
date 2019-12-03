@@ -1,40 +1,31 @@
 import discord
 from discord.ext import commands
 import asyncio
+import youtube_dl
 import time
+import os
 from datetime import datetime as dt
+from gtts import gTTS as gtts
 import praw
 
 #secrets:
-TOKEN='NjM1MTk2MDk1MDM4NzUwNzUw.Xa40Lw.lxsPhzO5Ri_2_MpJKLzm2VLHTs4'
-client_id='_EtunUH8kMdJ-g'
-client_secret='ZzW7E0fmJ7jhDnjKGUCzAfVGWvU'
+TOKEN="TOKEN"
+client_id='client_id'
+client_secret='client_secret'
 user_agent="bru"
 
-client=commands.Bot(command_prefix='.')
+player={}
 
-async def showerthoughts():
-	while True:
-		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
-		sub=reddit.subreddit('Showerthoughts').new(limit=900)
-		channels = client.get_all_channels()
-		for channel in channels:
-			if channel.name=='general':
-				channel=client.get_channel(channel.id)
-				for i in sub:
-					await channel.send(f'ShowerThoughts: {i.title}')
-					await channel.send('-----------------------')
-					await asyncio.sleep(300)
-		await asyncio.sleep(30)
+bclient=commands.Bot(command_prefix='.')
 
 async def memes():
 	while True:
 		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
 		sub=reddit.subreddit('memes').new(limit=900)
-		channels = client.get_all_channels()
+		channels = bclient.get_all_channels()
 		for channel in channels:
 			if channel.name=='memes':
-				channel=client.get_channel(channel.id)
+				channel=bclient.get_channel(channel.id)
 				for i in sub:
 					await channel.send(i.url)
 					await asyncio.sleep(300)
@@ -45,52 +36,39 @@ async def dank():
 	while True:
 		reddit=praw.Reddit(client_id=client_id,client_secret=client_secret,user_agent=user_agent)
 		sub=reddit.subreddit('dankmemes').new(limit=900)
-		channels = client.get_all_channels()
+		channels = bclient.get_all_channels()
 		for channel in channels:
 			if channel.name=='memes':
-				channel=client.get_channel(channel.id)
+				channel=bclient.get_channel(channel.id)
 				for i in sub:
 					await channel.send(i.url)
 					await asyncio.sleep(300)
 		await asyncio.sleep(30)
 
-client.loop.create_task(dank())
-client.loop.create_task(memes())
-client.loop.create_task(showerthoughts())
+bclient.loop.create_task(dank())
+bclient.loop.create_task(memes())
 
-@client.event
+@bclient.event
 async def on_ready():
     print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
+    print(bclient.user.name)
+    print(bclient.user.id)
 
-@client.event
+@bclient.event
 async def on_message(message):
-	print('client has sent a message')
-	await client.process_commands(message)
+	print('bclient has sent a message')
+	await bclient.process_commands(message)
 
-@client.command()
-async def echo(channel,arg):
-	await channel.send('none')
-
-@client.command()
-async def repeat(channel,*args):
-	output=''
-	for word in args:
-		output+=word
-		output+=' '
-	await channel.send(output)
-
-@client.command(pass_context=True)
+@bclient.command(pass_context=True)
 async def clear(ctx,amount=100):
 	channel=ctx.message.channel
 	msgs=[]
-	async for msg in client.logs_from(channel,limit=100):
+	async for msg in bclient.logs_from(channel,limit=100):
 		msgs.append(msg)
-	await client.delete_messages(messages)
+	await bclient.delete_messages(messages)
 	await channel.send('messages deleted')
 
-@client.command(pass_context=True)
+@bclient.command(pass_context=True)
 async def reddit(ctx,*args):
 	channel=ctx.message.channel
 	count=0
@@ -110,5 +88,27 @@ async def reddit(ctx,*args):
 			await channel.send('---------------')
 		count+=1
 
+#audio player
+@bclient.command(pass_content=True)
+async def say(ctx,*,text):
+	message=gtts(text)
+	message.save('tts.mp3')
+	channel=ctx.message.channel
+	user=ctx.message.author
+	if user.voice is None:
+		await channel.send('Join a voice channel first')
+		return
+	voice_channel=user.voice.channel
+	try:
+		voice_client = await voice_channel.connect()
+	except:
+		pass
+	ctx.guild.voice_client.play(discord.FFmpegPCMAudio('tts.mp3'))
+	
 
-client.run(TOKEN)
+@bclient.command(pass_content=True)
+async def q(ctx):
+	await bclient.logout()
+
+bclient.run(TOKEN)
+
